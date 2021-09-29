@@ -21,6 +21,10 @@ app.post("/", function(req, res){
     })
 })
 
+app.get("/qr", function(req, res){
+    res.send("QR working");
+})
+
 app.listen(8000, function(){
     console.log("Server is running on port 8000");
   });
