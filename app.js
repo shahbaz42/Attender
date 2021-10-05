@@ -7,7 +7,12 @@ require("dotenv").config() ;
 app = express();
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: true})); 
+app.use(express.static('public'));
 app.set("view engine", "ejs");
+
+
+list = [{name: "Monkey", present: "False", rollNo : "1" }, {name: "Dog", present: "False", rollNo : "2" }, {name: "Cow", present: "False" , rollNo : "3"}, {name: "Raptor", present: "False" , rollNo : "4" }];
+
 
 app.get("/", function(req, res){
     res.render("home");
@@ -21,8 +26,8 @@ app.post("/", function(req, res){
     })
 })
 
-app.get("/qr", function(req, res){
-    res.send("QR working");
+app.get("/a", function(req, res){
+    res.render("a", {list: list });
 })
 
 app.listen(8000, function(){

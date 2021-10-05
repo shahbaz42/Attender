@@ -1,0 +1,19 @@
+.attendance-cards-wrapper{
+    width : 100%;
+    margin-left: auto;
+}
+
+.student-card{
+    text-align: center;
+    background-color: rgb(241, 241, 241);
+    margin: 10px;
+    width: 240px;
+    height: 300px;
+    border-radius: 15px;
+    padding-top: 40px;
+    position: absolute;
+}
+
+.student-name{
+
+}
