@@ -8,7 +8,7 @@ const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const findOrCreate = require("mongoose-findorcreate");
-
+const {google} = require('googleapis');
 
 // Setup express
 app = express();
@@ -43,7 +43,15 @@ mongoose.connect(DB, function(err){
 const userSchema = new mongoose.Schema({
   name: String,
   username: String,
-  googleId: String
+  googleId: String,
+  refresh_token : String,
+  access_token : String,
+  token : {
+    refresh_token : String,
+    access_token : String,
+    scope: [String],
+    expiry_date : Number
+  }
 });
 
 userSchema.plugin(passportLocalMongoose);
@@ -60,12 +68,23 @@ passport.use(
       callbackURL: "http://localhost:8000/auth/google/secrets",
       userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
     },
-    function (accessToken, refreshToken, profile, cb) {
+    function (accessToken, refreshToken, params, profile, cb) {
+      console.log("AT : ", accessToken);
+      console.log("RT : ",refreshToken);
+      console.log("Params : ", params)
       User.findOrCreate(
         {
           googleId: profile.id,
           username: profile.id,
           name: profile.displayName,
+          refresh_token : refreshToken,
+          access_token : accessToken,
+          token : {
+            refresh_token : refreshToken,
+            access_token : accessToken,
+            scope: params.scope,
+            expiry_date : params.expires_in
+          }
         },
         function (err, user) {
           return cb(err, user);
@@ -116,9 +135,23 @@ app.get("/attendance", function (req, res) {
   res.render("a", { list: list });
 });
 
+///////////////////////////////////////////////////////////////////////////
+
+const client = new google.auth.OAuth2(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  "http://localhost:8000/auth/google/secrets"
+);
 
 
 
+app.get("/data", function(req, res){
+  client.credentials = req.user.token;
+    console.log(req.user.token);
+    listMajors(client);
+    res.send('Authentication successful! Please return to the console.');
+})
+///////////////////////////////////////////////////////////////////////////
 
 // Login Routes below
 app.get("/login", function (req, res) {
@@ -132,7 +165,7 @@ app.get("/logout", function (req, res) {
 
 app.get(
   "/auth/google",
-  passport.authenticate("google", { scope: ["profile"] })
+  passport.authenticate("google", { scope: ["profile", "https://www.googleapis.com/auth/spreadsheets.readonly"] , accessType: 'offline', approvalPrompt: 'force'})
 );
 
 app.get(
@@ -149,3 +182,33 @@ app.get(
 app.listen(8000, function () {
   console.log("Server is running on port 8000");
 });
+
+
+
+function listMajors(auth) {
+  console.log("auth : ", auth);
+  const sheets = google.sheets('v4');
+  sheets.spreadsheets.values.get(
+    {
+      auth: auth,
+      spreadsheetId: '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms',
+      range: 'Class Data!A2:E',
+    },
+    (err, res) => {
+      if (err) {
+        console.error('The API returned an error.');
+        throw err;
+      }
+      const rows = res.data.values;
+      if (rows.length === 0) {
+        console.log('No data found.');
+      } else {
+        console.log('Name, Major:');
+        for (const row of rows) {
+          // Print columns A and E, which correspond to indices 0 and 4.
+          console.log(`${row[0]}, ${row[4]}`);
+        }
+      }
+    }
+  );
+}
