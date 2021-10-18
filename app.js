@@ -8,7 +8,7 @@ const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const findOrCreate = require("mongoose-findorcreate");
-const {google} = require('googleapis');
+const { google } = require("googleapis");
 
 // Setup express
 app = express();
@@ -18,7 +18,7 @@ app.set("view engine", "ejs");
 
 app.use(
   session({
-    maxAge: 1000* 60 * 60 *24 * 365,
+    maxAge: 1000 * 60 * 60 * 24 * 365,
     secret: process.env.sessions_Secret,
     resave: false,
     saveUninitialized: false,
@@ -29,29 +29,32 @@ app.use(passport.initialize()); //initialising passport
 app.use(passport.session()); //making express use passport.sessions
 
 // Connecting with Database
-const DB = "mongodb+srv://"+process.env.mongo_Username+":"+process.env.mongo_Password+"@cluster0.2lld6.mongodb.net/attendanceDB?retryWrites=true&w=majority";
+const DB =
+  "mongodb+srv://" +
+  process.env.mongo_Username +
+  ":" +
+  process.env.mongo_Password +
+  "@cluster0.2lld6.mongodb.net/attendanceDB?retryWrites=true&w=majority";
 
-mongoose.connect(DB, function(err){
-  if (err){
+mongoose.connect(DB, function (err) {
+  if (err) {
     console.log("No Connection");
     console.log(err);
-  } else{
+  } else {
     console.log("Connection Sucessful");
   }
-})
+});
 
 const userSchema = new mongoose.Schema({
   name: String,
   username: String,
   googleId: String,
-  refresh_token : String,
-  access_token : String,
-  token : {
-    refresh_token : String,
-    access_token : String,
+  token: {
+    refresh_token: String,
+    access_token: String,
     scope: [String],
-    expiry_date : Number
-  }
+    expiry_date: Number,
+  },
 });
 
 userSchema.plugin(passportLocalMongoose);
@@ -70,21 +73,18 @@ passport.use(
     },
     function (accessToken, refreshToken, params, profile, cb) {
       console.log("AT : ", accessToken);
-      console.log("RT : ",refreshToken);
-      console.log("Params : ", params)
+      console.log("RT : ", refreshToken);
+      console.log("Params : ", params);
       User.findOrCreate(
+        { googleId: profile.id, username: profile.id },
         {
-          googleId: profile.id,
-          username: profile.id,
           name: profile.displayName,
-          refresh_token : refreshToken,
-          access_token : accessToken,
-          token : {
-            refresh_token : refreshToken,
-            access_token : accessToken,
+          token: {
+            refresh_token: refreshToken,
+            access_token: accessToken,
             scope: params.scope,
-            expiry_date : params.expires_in
-          }
+            expiry_date: params.expires_in,
+          },
         },
         function (err, user) {
           return cb(err, user);
@@ -111,19 +111,19 @@ passport.deserializeUser(function (id, done) {
 app.get("/", function (req, res) {
   if (req.isAuthenticated()) {
     res.redirect("/classes");
-  } else{
+  } else {
     res.render("home");
   }
 });
 
-app.get("/classes", function(req, res){
+app.get("/classes", function (req, res) {
   if (req.isAuthenticated()) {
     // console.log(req.user);
-    res.render("classes", {name: req.user.name });
-  } else{
+    res.render("classes", { name: req.user.name });
+  } else {
     res.render("home");
   }
-})
+});
 
 app.get("/attendance", function (req, res) {
   list = [
@@ -143,14 +143,24 @@ const client = new google.auth.OAuth2(
   "http://localhost:8000/auth/google/secrets"
 );
 
+app.get("/create", function (req, res) {
+  if (req.isAuthenticated()) {
+    res.render("create");
+  } else {
+    res.render("home");
+  }
+});
 
+app.post("/create", function (req, res) {
+  if (req.isAuthenticated()) {
+    client.credentials = req.user.token;
+    create(client, req.body.className);
+    res.send("<h2>Created a class</h2>");
+  } else {
+    res.render("home");
+  }
+});
 
-app.get("/data", function(req, res){
-  client.credentials = req.user.token;
-    console.log(req.user.token);
-    listMajors(client);
-    res.send('Authentication successful! Please return to the console.');
-})
 ///////////////////////////////////////////////////////////////////////////
 
 // Login Routes below
@@ -165,7 +175,11 @@ app.get("/logout", function (req, res) {
 
 app.get(
   "/auth/google",
-  passport.authenticate("google", { scope: ["profile", "https://www.googleapis.com/auth/spreadsheets.readonly"] , accessType: 'offline', approvalPrompt: 'force'})
+  passport.authenticate("google", {
+    scope: ["profile", "https://www.googleapis.com/auth/drive.file"],
+    accessType: "offline",
+    approvalPrompt: "force",
+  })
 );
 
 app.get(
@@ -176,39 +190,26 @@ app.get(
   }
 );
 
-
-
-
 app.listen(8000, function () {
   console.log("Server is running on port 8000");
 });
 
-
-
-function listMajors(auth) {
-  console.log("auth : ", auth);
-  const sheets = google.sheets('v4');
-  sheets.spreadsheets.values.get(
-    {
-      auth: auth,
-      spreadsheetId: '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms',
-      range: 'Class Data!A2:E',
+async function create(authClient, Name) {
+  const sheets = google.sheets("v4");
+  const request = {
+    resource: {
+      properties: {
+        title: Name,
+      },
     },
-    (err, res) => {
-      if (err) {
-        console.error('The API returned an error.');
-        throw err;
-      }
-      const rows = res.data.values;
-      if (rows.length === 0) {
-        console.log('No data found.');
-      } else {
-        console.log('Name, Major:');
-        for (const row of rows) {
-          // Print columns A and E, which correspond to indices 0 and 4.
-          console.log(`${row[0]}, ${row[4]}`);
-        }
-      }
-    }
-  );
+
+    auth: authClient,
+  };
+
+  try {
+    const response = (await sheets.spreadsheets.create(request)).data;
+    console.log(JSON.stringify(response, null, 2));
+  } catch (err) {
+    console.error(err);
+  }
 }
