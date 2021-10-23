@@ -16,6 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.set("view engine", "ejs");
 
+// Configuring Express session
 app.use(
   session({
     maxAge: 1000 * 60 * 60 * 24 * 365,
@@ -25,8 +26,10 @@ app.use(
   })
 );
 
-app.use(passport.initialize()); //initialising passport
-app.use(passport.session()); //making express use passport.sessions
+//initialising passport
+app.use(passport.initialize());
+//making express use passport.sessions 
+app.use(passport.session()); 
 
 // Connecting with Database
 const DB =
@@ -45,6 +48,7 @@ mongoose.connect(DB, function (err) {
   }
 });
 
+// Mongoose UserSchema
 const userSchema = new mongoose.Schema({
   name: String,
   username: String,
@@ -55,6 +59,7 @@ const userSchema = new mongoose.Schema({
     scope: [String],
     expiry_date: Number,
   },
+  spreadsheets: [],
 });
 
 userSchema.plugin(passportLocalMongoose);
@@ -118,8 +123,17 @@ app.get("/", function (req, res) {
 
 app.get("/classes", function (req, res) {
   if (req.isAuthenticated()) {
-    // console.log(req.user);
-    res.render("classes", { name: req.user.name });
+    
+    User.findById(req.user.id, function (err, found) {
+      if (err) {
+        console.log(err);
+      } else {
+        if (found) {
+          res.render("classes", { name: found.name, spreadsheets : found.spreadsheets });
+        }
+      }
+    });
+
   } else {
     res.render("home");
   }
@@ -154,8 +168,24 @@ app.get("/create", function (req, res) {
 app.post("/create", function (req, res) {
   if (req.isAuthenticated()) {
     client.credentials = req.user.token;
-    create(client, req.body.className);
-    res.send("<h2>Created a class</h2>");
+    create(client, req.body.className, function (response) {
+      User.findById(req.user.id, function (err, found) {
+        if (err) {
+          console.log(err);
+        } else {
+          if (found) {
+            found.spreadsheets.push({
+              name: req.body.className,
+              spreadsheetId: response.data.spreadsheetId,
+              spreadsheetUrl: response.data.spreadsheetUrl
+            });
+            found.save(function () {
+              res.redirect("/classes");
+            });
+          }
+        }
+      });
+    });
   } else {
     res.render("home");
   }
@@ -194,7 +224,7 @@ app.listen(8000, function () {
   console.log("Server is running on port 8000");
 });
 
-async function create(authClient, Name) {
+function create(authClient, Name, callback) {
   const sheets = google.sheets("v4");
   const request = {
     resource: {
@@ -206,10 +236,11 @@ async function create(authClient, Name) {
     auth: authClient,
   };
 
-  try {
-    const response = (await sheets.spreadsheets.create(request)).data;
-    console.log(JSON.stringify(response, null, 2));
-  } catch (err) {
-    console.error(err);
-  }
+  sheets.spreadsheets.create(request, function (err, response) {
+    if (err) {
+      console.log(err);
+    } else {
+      callback(response);
+    }
+  });
 }
