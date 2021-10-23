@@ -23,6 +23,26 @@ body{
     position: absolute;
 }
 
+.class-card{
+    text-align: center;
+    background-color: rgb(241, 241, 241);
+    display: inline-block;
+    margin: 10px;
+    width: 240px;
+    height: 300px;
+    border-radius: 15px;
+    padding-top: 40px;
+    position: relative;
+}
+.classes-button-group{
+    position: absolute;
+    bottom: 24px;
+}
+
+.btn{
+    border-radius: 12px;
+}
+
 
 /* Google sign in button */
 

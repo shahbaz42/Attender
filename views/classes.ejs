@@ -1,7 +1,24 @@
-<%- include('partials/header') %>  
-  
+<%- include('partials/header') %>
+
 <H2>Hii <%=name%>! Here are your classes</H2>
+
+<% spreadsheets.forEach(element => { %>
+
+<div class="class-card">
+  <h2 class="class-name"><%= element.name %></h2>
+  <div class="classes-button-group">
+    <a href="<%=element.spreadsheetUrl %> "
+      ><button class="m-2 btn btn-primary" style="width: 80%">
+        View Record
+      </button></a
+    >
+    <Button class="btn btn-danger" style="width: 80%">Take Attendance</Button>
+  </div>
+</div>
+
+<% }) %>
+<hr />
 <a class="btn btn-light btn-lg" href="/create" role="button">Add Class</a>
 <a class="btn btn-light btn-lg" href="/logout" role="button">Log Out</a>
-  
+
 <%- include('partials/footer') %>
