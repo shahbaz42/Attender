@@ -7,7 +7,6 @@ const passport = require("passport");
 //const passportLocal = require("passport-local");
 const passportLocalMongoose = require("passport-local-mongoose");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const findOrCreate = require("mongoose-findorcreate");
 const { google } = require("googleapis");
 
 // Setup express
@@ -80,7 +79,8 @@ passport.use(
       console.log("AT : ", accessToken);
       console.log("RT : ", refreshToken);
       console.log("Params : ", params);
-      User.findOrCreate(
+
+      User.findOneAndUpdate(
         { googleId: profile.id, username: profile.id },
         {
           name: profile.displayName,
@@ -91,10 +91,10 @@ passport.use(
             expiry_date: params.expires_in,
           },
         },
+        { upsert: true  },
         function (err, user) {
           return cb(err, user);
-        }
-      );
+        });
     }
   )
 );
@@ -139,15 +139,15 @@ app.get("/classes", function (req, res) {
   }
 });
 
-app.get("/attendance", function (req, res) {
-  list = [
-    { name: "Monkey", present: "False", rollNo: "1" },
-    { name: "Dog", present: "False", rollNo: "2" },
-    { name: "Cow", present: "False", rollNo: "3" },
-    { name: "Raptor", present: "False", rollNo: "4" },
-  ];
-  res.render("a", { list: list });
-});
+// app.get("/attendance", function (req, res) {
+//   list = [
+//     { name: "Monkey", present: "False", rollNo: "1" },
+//     { name: "Dog", present: "False", rollNo: "2" },
+//     { name: "Cow", present: "False", rollNo: "3" },
+//     { name: "Raptor", present: "False", rollNo: "4" },
+//   ];
+//   res.render("attendance", { list: list });
+// });
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -158,6 +158,7 @@ const client = new google.auth.OAuth2(
 );
 
 app.get("/create", function (req, res) {
+  console.log("req.user.token Before____ ", req.user.token);
   if (req.isAuthenticated()) {
     res.render("create");
   } else {
@@ -167,6 +168,12 @@ app.get("/create", function (req, res) {
 
 app.post("/create", function (req, res) {
   if (req.isAuthenticated()) {
+    const client = new google.auth.OAuth2(
+      process.env.CLIENT_ID,
+      process.env.CLIENT_SECRET,
+      "http://localhost:8000/auth/google/secrets"
+    );
+    
     client.credentials = req.user.token;
     create(client, req.body.className, function (response) {
       User.findById(req.user.id, function (err, found) {
@@ -186,6 +193,20 @@ app.post("/create", function (req, res) {
         }
       });
     });
+  } else {
+    res.render("home");
+  }
+});
+
+app.get("/attendance/:spreadsheetId", function(req, res){
+  if (req.isAuthenticated()){
+    client.credientials = req.user.token;
+    console.log(client);
+    readColumn(client, req.params.spreadsheetId, "Sheet1!A1:A", function(response){
+      // console.log(response);
+      res.send(response);
+    })
+    // listMajors(client)
   } else {
     res.render("home");
   }
@@ -243,4 +264,21 @@ function create(authClient, Name, callback) {
       callback(response);
     }
   });
+}
+
+function readColumn(authClient,spreadsheetID, myRange, callback){
+  const sheets = google.sheets("v4");
+  const request = {
+    auth : authClient,
+    spreadsheetId: spreadsheetID,
+    range: myRange
+  }
+  
+  sheets.spreadsheets.values.get(request, function(err, response){
+    if (err){
+      console.log(err);
+    } else {
+      callback(response);
+    }
+  })
 }
