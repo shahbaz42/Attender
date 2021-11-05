@@ -31,12 +31,14 @@ app.use(passport.initialize());
 app.use(passport.session()); 
 
 // Connecting with Database
-const DB =
-  "mongodb+srv://" +
-  process.env.mongo_Username +
-  ":" +
-  process.env.mongo_Password +
-  "@cluster0.2lld6.mongodb.net/attendanceDB?retryWrites=true&w=majority";
+// const DB =
+//   "mongodb+srv://" +
+//   process.env.mongo_Username +
+//   ":" +
+//   process.env.mongo_Password +
+//   "@cluster0.2lld6.mongodb.net/attendanceDB?retryWrites=true&w=majority";
+
+const DB = "mongodb://localhost:27017/Attendance";
 
 mongoose.connect(DB, function (err) {
   if (err) {
@@ -62,7 +64,6 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.plugin(passportLocalMongoose);
-userSchema.plugin(findOrCreate);
 
 const User = new mongoose.model("User", userSchema);
 
