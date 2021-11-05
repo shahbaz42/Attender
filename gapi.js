@@ -2,20 +2,15 @@ const { google } = require("googleapis");
 const axios = require("axios");
 require("dotenv").config();
 
-const CI = process.env.client_id;
-const CS = process.env.client_secret;
-const RI = "http://localhost:8000/auth/google/secrets";
-const RT =
-  "";
 
-const getRefreshToken = (CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN, callback) => {
+const getAccessToken = (token, callback) => {
   url =
     "https://oauth2.googleapis.com/token?grant_type=refresh_token&refresh_token=" +
-    REFRESH_TOKEN +
+    token.refresh_token +
     "&client_id=" +
-    CLIENT_ID +
+    token.client_id +
     "&client_secret=" +
-    CLIENT_SECRET;
+    token.client_secret;
 
   axios
     .post(url, {})
@@ -27,10 +22,12 @@ const getRefreshToken = (CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN, callback) => {
     });
 };
 
-function createSpreadsheet(Name, callback) {
-  const oAuth2Client = new google.auth.OAuth2(CI, CS, RI);
 
-  getRefreshToken(CI, CS, RT, (accessToken) => {
+
+const createSpreadsheet (token, Name, callback)=> {
+  const oAuth2Client = new google.auth.OAuth2(token.client_id, token.client_secret, token.refresh_token);
+
+  getAccessToken(token, (accessToken) => {
     oAuth2Client.setCredentials({ access_token: accessToken.access_token });
     const sheets = google.sheets("v4");
     const request = {
@@ -52,10 +49,10 @@ function createSpreadsheet(Name, callback) {
   });
 }
 
-function readColumn(spreadsheetID, myRange, callback) {
-  const oAuth2Client = new google.auth.OAuth2(CI, CS, RI);
+const readColumn(token, spreadsheetID, myRange, callback)=> {
+  const oAuth2Client = new google.auth.OAuth2(token.client_id, token.client_secret, token.refresh_token);
 
-  getRefreshToken(CI, CS, RT, (accessToken) => {
+  getAccessToken(token, (accessToken) => {
     oAuth2Client.setCredentials({ access_token: accessToken.access_token });
 
     const sheets = google.sheets("v4");
@@ -73,14 +70,13 @@ function readColumn(spreadsheetID, myRange, callback) {
       }
     });
   });
-
 }
 
+// readColumn(tokenSamp , SSID, "Sheet1!A1:A", function (response) {
+//   console.log(response);
+// });
 
-readColumn(spreadsheetID, myRange, callback)
-
-
-// createSpreadsheet("1234monkey", function (response) {
+// createSpreadsheet(tokenSamp, "1234monkey", function (response) {
 //   //   console.log(response);
 // });
 
@@ -89,6 +85,7 @@ readColumn(spreadsheetID, myRange, callback)
 // });
 
 module.exports = {
-  getRefreshToken,
+  getAccessToken,
   createSpreadsheet,
+  readColumn,
 };
