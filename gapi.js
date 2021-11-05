@@ -3,6 +3,7 @@ const axios = require("axios");
 require("dotenv").config();
 
 
+
 const getAccessToken = (refresh_token, callback) => {
   url =
     "https://oauth2.googleapis.com/token?grant_type=refresh_token&refresh_token=" +
@@ -25,7 +26,8 @@ const getAccessToken = (refresh_token, callback) => {
 
 
 const createSpreadsheet = (refresh_token, Name, callback)=> {
-  const oAuth2Client = new google.auth.OAuth2(process.env.client_id, process.env.client_secret, refresh_token);
+  
+    const oAuth2Client = new google.auth.OAuth2(process.env.client_id, process.env.client_secret, refresh_token);
 
   getAccessToken(refresh_token, (accessToken) => {
     oAuth2Client.setCredentials({ access_token: accessToken.access_token });
@@ -47,9 +49,13 @@ const createSpreadsheet = (refresh_token, Name, callback)=> {
       }
     });
   });
+
 }
 
+
+
 const readColumn = (refresh_token, spreadsheetID, myRange, callback)=> {
+
   const oAuth2Client = new google.auth.OAuth2(process.env.client_id, process.env.client_secret, refresh_token);
 
   getAccessToken(refresh_token, (accessToken) => {
@@ -70,19 +76,23 @@ const readColumn = (refresh_token, spreadsheetID, myRange, callback)=> {
       }
     });
   });
+
 }
 
-// readColumn(refresh_token , SSID, "Sheet1!A1:A", function (response) {
-//    console.log(response);
-// });
 
-// createSpreadsheet(refresh_token, "1234monkey", function (response) {
-//   //   console.log(response);
-// });
+/*
+readColumn(refresh_token , SSID, "Sheet1!A1:A", function (response) {
+   console.log(response);
+});
 
-// getRefreshToken(CI, CS, RT, (at) => {
-//   console.log(at);
-// });
+createSpreadsheet(refresh_token, "1234monkey", function (response) {
+  //   console.log(response);
+});
+
+getRefreshToken(CI, CS, RT, (at) => {
+  console.log(at);
+});
+*/
 
 module.exports = {
   getAccessToken,
