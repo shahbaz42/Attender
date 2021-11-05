@@ -3,14 +3,14 @@ const axios = require("axios");
 require("dotenv").config();
 
 
-const getAccessToken = (token, callback) => {
+const getAccessToken = (refresh_token, callback) => {
   url =
     "https://oauth2.googleapis.com/token?grant_type=refresh_token&refresh_token=" +
-    token.refresh_token +
+    refresh_token +
     "&client_id=" +
-    token.client_id +
+    process.env.client_id +
     "&client_secret=" +
-    token.client_secret;
+    process.env.client_secret;
 
   axios
     .post(url, {})
@@ -24,10 +24,10 @@ const getAccessToken = (token, callback) => {
 
 
 
-const createSpreadsheet (token, Name, callback)=> {
-  const oAuth2Client = new google.auth.OAuth2(token.client_id, token.client_secret, token.refresh_token);
+const createSpreadsheet = (refresh_token, Name, callback)=> {
+  const oAuth2Client = new google.auth.OAuth2(process.env.client_id, process.env.client_secret, refresh_token);
 
-  getAccessToken(token, (accessToken) => {
+  getAccessToken(refresh_token, (accessToken) => {
     oAuth2Client.setCredentials({ access_token: accessToken.access_token });
     const sheets = google.sheets("v4");
     const request = {
@@ -49,10 +49,10 @@ const createSpreadsheet (token, Name, callback)=> {
   });
 }
 
-const readColumn(token, spreadsheetID, myRange, callback)=> {
-  const oAuth2Client = new google.auth.OAuth2(token.client_id, token.client_secret, token.refresh_token);
+const readColumn = (refresh_token, spreadsheetID, myRange, callback)=> {
+  const oAuth2Client = new google.auth.OAuth2(process.env.client_id, process.env.client_secret, refresh_token);
 
-  getAccessToken(token, (accessToken) => {
+  getAccessToken(refresh_token, (accessToken) => {
     oAuth2Client.setCredentials({ access_token: accessToken.access_token });
 
     const sheets = google.sheets("v4");
@@ -72,11 +72,11 @@ const readColumn(token, spreadsheetID, myRange, callback)=> {
   });
 }
 
-// readColumn(tokenSamp , SSID, "Sheet1!A1:A", function (response) {
-//   console.log(response);
+// readColumn(refresh_token , SSID, "Sheet1!A1:A", function (response) {
+//    console.log(response);
 // });
 
-// createSpreadsheet(tokenSamp, "1234monkey", function (response) {
+// createSpreadsheet(refresh_token, "1234monkey", function (response) {
 //   //   console.log(response);
 // });
 
