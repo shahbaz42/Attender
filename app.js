@@ -1,13 +1,10 @@
 const express = require("express");
 const ejs = require("ejs");
-const mongoose = require("mongoose");
-require("dotenv").config();
 const session = require("express-session");
 const passport = require("passport");
-const passportLocalMongoose = require("passport-local-mongoose");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const g = require("./gapi");
-
+const User = require("./model");
 
 
 // Setup express
@@ -36,39 +33,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
-
-// Connecting with Database
-// const DB =
-//   "mongodb+srv://" +
-//   process.env.mongo_Username +
-//   ":" +
-//   process.env.mongo_Password +
-//   "@cluster0.2lld6.mongodb.net/attendanceDB?retryWrites=true&w=majority";
-
-const DB = "mongodb://localhost:27017/Attendance";
-
-mongoose.connect(DB, function (err) {
-  if (err) {
-    console.log("No Connection");
-    console.log(err);
-  } else {
-    console.log("Connection Sucessful");
-  }
-});
-
-// Mongoose UserSchema
-const userSchema = new mongoose.Schema({
-  name: String,
-  username: String,
-  googleId: String,
-  refresh_token: String,
-  scope: [String],
-  spreadsheets: [],
-});
-
-userSchema.plugin(passportLocalMongoose);
-
-const User = new mongoose.model("User", userSchema);
 
 
 
