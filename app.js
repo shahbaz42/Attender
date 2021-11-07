@@ -145,15 +145,15 @@ app.get("/classes", function (req, res) {
 });
 
 
-// app.get("/attendance", function (req, res) {
-//   list = [
-//     { name: "Monkey", present: "False", rollNo: "1" },
-//     { name: "Dog", present: "False", rollNo: "2" },
-//     { name: "Cow", present: "False", rollNo: "3" },
-//     { name: "Raptor", present: "False", rollNo: "4" },
-//   ];
-//   res.render("attendance", { list: list });
-// });
+app.get("/attendance", function (req, res) {
+  list = [
+    { name: "Monkey", present: "False", rollNo: "1" },
+    { name: "Dog", present: "False", rollNo: "2" },
+    { name: "Cow", present: "False", rollNo: "3" },
+    { name: "Raptor", present: "False", rollNo: "4" },
+  ];
+  res.render("attendance", { list: list });
+});
 
 
 app.get("/create", function (req, res) {
