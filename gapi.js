@@ -80,6 +80,9 @@ const readColumn = (refresh_token, spreadsheetID, myRange, callback)=> {
 }
 
 
+const appendColumn = (refresh_token, spreadsheetID, callback)=> {}
+
+
 /*
 readColumn(refresh_token , SSID, "Sheet1!A1:A", function (response) {
    console.log(response);
@@ -98,4 +101,5 @@ module.exports = {
   getAccessToken,
   createSpreadsheet,
   readColumn,
+  appendColumn
 };
