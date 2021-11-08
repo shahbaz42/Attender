@@ -70,7 +70,7 @@ const readColumn = (refresh_token, spreadsheetID, myRange, callback)=> {
 
     sheets.spreadsheets.values.get(request, function (err, response) {
       if (err) {
-        console.log(err);
+        console.log("Some Error Occured",err);
       } else {
         callback(response);
       }

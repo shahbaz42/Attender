@@ -1,25 +1,35 @@
   <%- include('partials/header') %>
 
     <div class="attendance-cards-wrapper">
-      
+      <button class="btn btn-outline-danger finalSubmit" onclick = "sendData()">Submit</button>
       <% list.forEach(element => { %>
-        <div class="student-card" id="<%= element.rollNo %>">
-          <h2 class="student-name"><%= element.name %> </h2>
+        <div class="student-card" id="<%= element[0] %>">
+          <h2 class="student-name"><%= element[1] %> </h2>
+          <br>
+          <h2 class="student-name"><%= element[0] %> </h2>
+          <br>
+          <br>
+          <br>
           <div class="buttons">
-            <button class="btn btn-outline-primary" onclick="markPresent('<%= element.rollNo %>')" >Present</button>
-            <Button class="btn btn-outline-danger" onclick="markAbsent('<%= element.rollNo %>')">Absent</Button>
+            <button class="btn btn-outline-primary" onclick="markPresent('<%= element[0] %>')" >Present</button>
+            <Button class="btn btn-outline-danger" onclick="markAbsent('<%= element[0] %>')">Absent</Button>
           </div>
         </div>
       <% }) %>
     </div>
 
     <script>
-      
+      var data = [];
       function markPresent(rollNo){
         document.getElementById(rollNo).style.display = "none"
+        data.push("P");
       }
       function markAbsent(rollNo){
         document.getElementById(rollNo).style.display = "none"
+        data.push("A");
+      }
+      function sendData(){
+        console.log(data);
       }
     </script>
   
