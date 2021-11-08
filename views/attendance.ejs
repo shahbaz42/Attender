@@ -1,32 +1,38 @@
 <%- include('partials/header') %>
 
 <div class="attendance-cards-wrapper">
-  <button class="btn btn-outline-danger finalSubmit" onclick="sendData()">
-    Submit
-  </button>
-  <% list.reverse().forEach(element => { %>
-  <div class="student-card" id="<%= element[0] %>">
-    <h2 class="student-name"><%= element[1] %></h2>
-    <br />
-    <h2 class="student-name"><%= element[0] %></h2>
-    <br />
-    <br />
-    <br />
-    <div class="buttons">
-      <button
-        class="btn btn-outline-primary"
-        onclick="markPresent('<%= element[0] %>')"
-      >
-        Present
-      </button>
-      <Button
-        class="btn btn-outline-danger"
-        onclick="markAbsent('<%= element[0] %>')"
-        >Absent</Button
-      >
-    </div>
-  </div>
-  <% }) %>
+  <% if(list){ %> 
+    <button class="btn btn-outline-danger finalSubmit" onclick="sendData()">
+      Submit
+    </button>
+    <% list.reverse().forEach(element => { %>
+      <div class="student-card" id="<%= element[0] %>">
+        <h2 class="student-name"><%= element[1] %></h2>
+        <br />
+        <h2 class="student-name"><%= element[0] %></h2>
+        <br />
+        <br />
+        <br />
+        <div class="buttons">
+          <button
+            class="btn btn-outline-primary"
+            onclick="markPresent('<%= element[0] %>')"
+          >
+            Present
+          </button>
+          <Button
+            class="btn btn-outline-danger"
+            onclick="markAbsent('<%= element[0] %>')"
+            >Absent</Button
+          >
+        </div>
+      </div>
+      <% }) %>
+  <% }else{ %>
+    <h1>No Students</h1>
+  <%}%>
+
+  
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -46,11 +52,11 @@
 
   function markPresent(rollNo) {
     document.getElementById(rollNo).style.display = "none";
-    data.push(["P"]);
+    data.push(["Present"]);
   }
   function markAbsent(rollNo) {
     document.getElementById(rollNo).style.display = "none";
-    data.push(["A"]);
+    data.push(["Absent"]);
   }
 
   async function sendData() {
