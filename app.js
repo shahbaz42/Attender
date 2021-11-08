@@ -110,6 +110,7 @@ app.get("/classes", function (req, res) {
 
 
 app.get("/attendance", function (req, res) {
+  console.log("request recieved at /attendance");
   list = [
     { name: "Monkey", present: "False", rollNo: "1" },
     { name: "Dog", present: "False", rollNo: "2" },
@@ -160,19 +161,23 @@ app.post("/create", function (req, res) {
 
 
 app.get("/attendance/:spreadsheetId", function (req, res) {
+  console.log("req Recieved");
   if (req.isAuthenticated()) {
     g.readColumn(
       req.user.refresh_token,
       req.params.spreadsheetId,
-      "Sheet1!A1:A",
+      "Sheet1!A2:B",
       function (response) {
-        res.send(response);
+        console.log(response.data.values);
+        res.render("attendance", { list: response.data.values });
       }
     );
   } else {
     res.render("home");
   }
 });
+
+
 
 
 // Login Routes below
