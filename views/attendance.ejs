@@ -1,26 +1,74 @@
-  <%- include('partials/header') %>
+<%- include('partials/header') %>
 
-    <div class="attendance-cards-wrapper">
-      
-      <% list.forEach(element => { %>
-        <div class="student-card" id="<%= element.rollNo %>">
-          <h2 class="student-name"><%= element.name %> </h2>
-          <div class="buttons">
-            <button class="btn btn-outline-primary" onclick="markPresent('<%= element.rollNo %>')" >Present</button>
-            <Button class="btn btn-outline-danger" onclick="markAbsent('<%= element.rollNo %>')">Absent</Button>
-          </div>
+<div class="attendance-cards-wrapper">
+  <% if(list){ %> 
+    <button class="btn btn-outline-danger finalSubmit" onclick="sendData()">
+      Submit
+    </button>
+    <% list.reverse().forEach(element => { %>
+      <div class="student-card" id="<%= element[0] %>">
+        <h2 class="student-name"><%= element[1] %></h2>
+        <br />
+        <h2 class="student-name"><%= element[0] %></h2>
+        <br />
+        <br />
+        <br />
+        <div class="buttons">
+          <button
+            class="btn btn-outline-primary"
+            onclick="markPresent('<%= element[0] %>')"
+          >
+            Present
+          </button>
+          <Button
+            class="btn btn-outline-danger"
+            onclick="markAbsent('<%= element[0] %>')"
+            >Absent</Button
+          >
         </div>
+      </div>
       <% }) %>
-    </div>
+  <% }else{ %>
+    <h1>No Students</h1>
+  <%}%>
 
-    <script>
-      
-      function markPresent(rollNo){
-        document.getElementById(rollNo).style.display = "none"
-      }
-      function markAbsent(rollNo){
-        document.getElementById(rollNo).style.display = "none"
-      }
-    </script>
   
-  <%- include('partials/footer') %>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+  var data = [];
+
+  const today = new Date();
+
+  var options = {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  };
+
+  data.push([today.toLocaleDateString("en-US", options)]);
+
+  function markPresent(rollNo) {
+    document.getElementById(rollNo).style.display = "none";
+    data.push(["Present"]);
+  }
+  function markAbsent(rollNo) {
+    document.getElementById(rollNo).style.display = "none";
+    data.push(["Absent"]);
+  }
+
+  async function sendData() {
+
+    axios.put("", {
+      data: data,
+    });
+
+    window.location.href = "/";
+
+  }
+
+</script>
+
+<%- include('partials/footer') %>

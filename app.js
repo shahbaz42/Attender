@@ -10,6 +10,7 @@ const User = require("./model");
 // Setup express
 app = express();
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json())
 app.use(express.static("public"));
 app.set("view engine", "ejs");
 
@@ -63,14 +64,15 @@ passport.use(
 );
 
 
+//creating strategy for passport
+passport.use(User.createStrategy());  
 
-passport.use(User.createStrategy());
-
-//Below code is for putting info into cookie and for cracking open cookie to find info
+//Below code is for putting info into cookie
 passport.serializeUser(function (user, done) {
   done(null, user.id);
 });
 
+//Below code is for cracking open cookie to find info
 passport.deserializeUser(function (id, done) {
   User.findById(id, function (err, user) {
     done(err, user);
@@ -89,6 +91,7 @@ app.get("/", function (req, res) {
 });
 
 
+// Route for displaying classes
 app.get("/classes", function (req, res) {
   if (req.isAuthenticated()) {
     User.findById(req.user.id, function (err, found) {
@@ -109,17 +112,8 @@ app.get("/classes", function (req, res) {
 });
 
 
-app.get("/attendance", function (req, res) {
-  list = [
-    { name: "Monkey", present: "False", rollNo: "1" },
-    { name: "Dog", present: "False", rollNo: "2" },
-    { name: "Cow", present: "False", rollNo: "3" },
-    { name: "Raptor", present: "False", rollNo: "4" },
-  ];
-  res.render("attendance", { list: list });
-});
 
-
+// Route for sending create spreadsheet page
 app.get("/create", function (req, res) {
   if (req.isAuthenticated()) {
     res.render("create");
@@ -129,6 +123,8 @@ app.get("/create", function (req, res) {
 });
 
 
+
+// Route for creating spreadsheet
 app.post("/create", function (req, res) {
   if (req.isAuthenticated()) {
     g.createSpreadsheet(
@@ -159,20 +155,46 @@ app.post("/create", function (req, res) {
 });
 
 
+
+
 app.get("/attendance/:spreadsheetId", function (req, res) {
   if (req.isAuthenticated()) {
     g.readColumn(
       req.user.refresh_token,
       req.params.spreadsheetId,
-      "Sheet1!A1:A",
+      "Sheet1!A2:B",
       function (response) {
-        res.send(response);
+        res.render("attendance", { list: response.data.values });
       }
     );
   } else {
     res.render("home");
   }
 });
+
+
+
+
+app.put("/attendance/:spreadsheetId", function(req, res){
+  if(req.isAuthenticated()){
+
+    g.insertColumn(req.user.refresh_token, req.params.spreadsheetId, function(r){
+      g.addColumn(
+        req.user.refresh_token,
+        req.params.spreadsheetId, 
+        "Sheet1!C:C", 
+        req.body.data, 
+        function(response){
+          res.send("Done");
+        });
+    });
+
+  }else{
+    res.render("home");
+  }
+});
+
+
 
 
 // Login Routes below
