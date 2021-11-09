@@ -180,6 +180,7 @@ app.get("/login", function (req, res) {
   res.render("login");
 });
 
+// rouute for logging out
 app.get("/logout", function (req, res) {
   req.logout();
   res.redirect("/");
@@ -202,6 +203,8 @@ app.get(
   }
 );
 
+
+//Starting Server
 app.listen(8000, function () {
   console.log("Server is running on port 8000");
 });
