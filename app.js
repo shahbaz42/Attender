@@ -64,14 +64,15 @@ passport.use(
 );
 
 
+//creating strategy for passport
+passport.use(User.createStrategy());  
 
-passport.use(User.createStrategy());
-
-//Below code is for putting info into cookie and for cracking open cookie to find info
+//Below code is for putting info into cookie
 passport.serializeUser(function (user, done) {
   done(null, user.id);
 });
 
+//Below code is for cracking open cookie to find info
 passport.deserializeUser(function (id, done) {
   User.findById(id, function (err, user) {
     done(err, user);
@@ -90,7 +91,7 @@ app.get("/", function (req, res) {
 });
 
 
-
+// Route for displaying classes
 app.get("/classes", function (req, res) {
   if (req.isAuthenticated()) {
     User.findById(req.user.id, function (err, found) {
@@ -112,7 +113,7 @@ app.get("/classes", function (req, res) {
 
 
 
-
+// Route for sending create spreadsheet page
 app.get("/create", function (req, res) {
   if (req.isAuthenticated()) {
     res.render("create");
@@ -123,6 +124,7 @@ app.get("/create", function (req, res) {
 
 
 
+// Route for creating spreadsheet
 app.post("/create", function (req, res) {
   if (req.isAuthenticated()) {
     g.createSpreadsheet(
@@ -176,14 +178,16 @@ app.get("/attendance/:spreadsheetId", function (req, res) {
 app.put("/attendance/:spreadsheetId", function(req, res){
   if(req.isAuthenticated()){
 
-    g.addColumn(
-      req.user.refresh_token,
-      req.params.spreadsheetId, 
-      "Sheet1!C:C", 
-      req.body.data, 
-      function(response){
-        res.send("Done");
-      });
+    g.insertColumn(req.user.refresh_token, req.params.spreadsheetId, function(r){
+      g.addColumn(
+        req.user.refresh_token,
+        req.params.spreadsheetId, 
+        "Sheet1!C:C", 
+        req.body.data, 
+        function(response){
+          res.send("Done");
+        });
+    });
 
   }else{
     res.render("home");
