@@ -51,10 +51,12 @@
   data.push([today.toLocaleDateString("en-US", options)]);
 
   function markPresent(rollNo) {
+    navigator.vibrate(10);
     document.getElementById(rollNo).style.display = "none";
     data.push(["Present"]);
   }
   function markAbsent(rollNo) {
+    navigator.vibrate(10);
     document.getElementById(rollNo).style.display = "none";
     data.push(["Absent"]);
   }
