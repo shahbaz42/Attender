@@ -157,11 +157,11 @@ app.post("/create", function (req, res) {
 
 
 
-app.get("/attendance/:spreadsheetId", function (req, res) {
+app.get("/attendance", function (req, res) {
   if (req.isAuthenticated()) {
     g.readColumn(
       req.user.refresh_token,
-      req.params.spreadsheetId,
+      req.query.spreadsheetId,
       "Sheet1!A2:B",
       function (response) {
         res.render("attendance", { list: response.data.values });
@@ -175,10 +175,10 @@ app.get("/attendance/:spreadsheetId", function (req, res) {
 
 
 
-app.put("/attendance/:spreadsheetId", function(req, res){
+app.put("/attendance", function(req, res){
   if(req.isAuthenticated()){
 
-    g.insertColumn(req.user.refresh_token, req.params.spreadsheetId, function(r){
+    g.insertColumn(req.user.refresh_token, req.query.spreadsheetId, function(r){
       g.addColumn(
         req.user.refresh_token,
         req.params.spreadsheetId, 
@@ -224,6 +224,10 @@ app.get(
     res.redirect("/");
   }
 );
+
+app.get("/demo/", function(req, res){
+  res.send(req.query);
+})
 
 
 //Starting Server
