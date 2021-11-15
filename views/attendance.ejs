@@ -1,76 +1,55 @@
 <%- include('partials/header') %>
 
-<div class="attendance-cards-wrapper">
-  <% if(list){ %> 
-    <button class="btn btn-outline-danger finalSubmit" onclick="sendData()">
-      Submit
-    </button>
-    <% list.reverse().forEach(element => { %>
-      <div class="student-card" id="<%= element[0] %>">
-        <h2 class="student-name"><%= element[1] %></h2>
-        <br />
-        <h2 class="student-name"><%= element[0] %></h2>
-        <br />
-        <br />
-        <br />
-        <div class="buttons">
-          <button
-            class="btn btn-outline-primary"
-            onclick="markPresent('<%= element[0] %>')"
-          >
-            Present
-          </button>
-          <Button
-            class="btn btn-outline-danger"
-            onclick="markAbsent('<%= element[0] %>')"
-            >Absent</Button
-          >
+<div class="student">
+  <header class="student__header"></header>
+  <div class="student__content">
+    <div class="student__card-cont">
+      <% if(list){ %>
+      <button class="btn btn-outline-danger btn-lg finalSubmit" onclick="sendData()">
+        Submit
+      </button>
+      <% list.reverse().forEach(element => { %>
+      <div class="student__card" id="<%= element[0] %>">
+        <div class="student-card">
+          <h2 class="student-name"><%= element[1] %></h2>
+          <br />
+          <h2 class="student-name"><%= element[0] %></h2>
+          <br />
+          <br />
+          <br />
+          <div class="buttons">
+            <button
+              class="btn btn-outline-danger"
+              onclick="markAbsent('<%= element[0] %>')"
+            >
+              Absent
+            </button>
+            <button
+              class="btn btn-outline-primary"
+              onclick="markPresent('<%= element[0] %>')"
+            >
+              Present
+            </button>
+          </div>
         </div>
+        <div class="student__card__choice m--reject"></div>
+        <div class="student__card__choice m--like"></div>
+        <div class="student__card__drag"></div>
       </div>
-      <% }) %>
-  <% }else{ %>
-    <h1>No Students</h1>
-  <%}%>
-
-  
+      <% }) %> <% }else{ %>
+      <h1>No Students</h1>
+      <%}%>
+    </div>
+    <p class="student__tip">
+      Swipe right to mark present -->
+      <br>
+      <-- Swipe left to mark absent
+    </p>
+  </div>
 </div>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
-<script>
-  var data = [];
-
-  const today = new Date();
-
-  var options = {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  };
-
-  data.push([today.toLocaleDateString("en-US", options)]);
-
-  function markPresent(rollNo) {
-    navigator.vibrate(10);
-    document.getElementById(rollNo).style.display = "none";
-    data.push(["Present"]);
-  }
-  function markAbsent(rollNo) {
-    navigator.vibrate(10);
-    document.getElementById(rollNo).style.display = "none";
-    data.push(["Absent"]);
-  }
-
-  async function sendData() {
-
-    axios.put("", {
-      data: data,
-    });
-
-    window.location.href = "/";
-
-  }
-
-</script>
+<script src="http://localhost:8000/main.js" type="text/javascript"></script>
 
 <%- include('partials/footer') %>
