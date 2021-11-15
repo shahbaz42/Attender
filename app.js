@@ -177,11 +177,11 @@ app.get("/attendance", function (req, res) {
 
 app.put("/attendance", function(req, res){
   if(req.isAuthenticated()){
-
+    
     g.insertColumn(req.user.refresh_token, req.query.spreadsheetId, function(r){
       g.addColumn(
         req.user.refresh_token,
-        req.params.spreadsheetId, 
+        req.query.spreadsheetId, 
         "Sheet1!C:C", 
         req.body.data, 
         function(response){

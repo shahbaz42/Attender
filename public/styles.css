@@ -1,131 +1,308 @@
-body{
-    padding: 12px;
+body {
+  padding: 12px;
 }
 
-.attendance-cards-wrapper{
-    width : 100%;
-    margin-left: auto;
+.attendance-cards-wrapper {
+  width: 100%;
+  margin-left: auto;
 }
 
-.compact{
-    max-width: 320px;
-    margin: auto;
+.compact {
+  max-width: 320px;
+  margin: auto;
 }
 
-.student-card{
-    text-align: center;
-    background-color: rgb(241, 241, 241);
-    margin: 10px;
-    width: 320px;
-    height: 400px;
-    border-radius: 15px;
-    padding-top: 40px;
-    position: absolute;
+.student-card {
+  text-align: center;
+  background-color: rgb(241, 241, 241);
+  margin: 10px;
+  width: 320px;
+  height: 400px;
+  border-radius: 15px;
+  padding-top: 40px;
+  position: absolute;
 }
 
-.class-card{
-    text-align: center;
-    background-color: rgb(241, 241, 241);
-    display: inline-block;
-    margin: 10px;
-    width: 240px;
-    height: 300px;
-    border-radius: 15px;
-    padding-top: 40px;
-    position: relative;
+.class-card {
+  text-align: center;
+  background-color: rgb(241, 241, 241);
+  display: inline-block;
+  margin: 10px;
+  width: 240px;
+  height: 300px;
+  border-radius: 15px;
+  padding-top: 40px;
+  position: relative;
 }
-.classes-button-group{
-    position: absolute;
-    bottom: 24px;
-}
-
-.btn{
-    border-radius: 12px;
+.classes-button-group {
+  position: absolute;
+  bottom: 24px;
 }
 
-.finalSubmit{
-    position: absolute;
-    top: 24px;
-    left: 24px;
+.btn {
+  border-radius: 12px;
+}
+
+.finalSubmit {
+  position: absolute;
+  top: 24px;
+  left: 24px;
 }
 
 /* Google sign in button */
 
-.google-button{
-    background-color: #4285f4;
-    height: 50px;
-    padding: 0;
-    margin: 10px;
-    width: 240px;
-    position: relative;
+.google-button {
+  background-color: #4285f4;
+  height: 50px;
+  padding: 0;
+  margin: 10px;
+  width: 240px;
+  position: relative;
 }
 
-.google-button-icon{
-    background-color: #ffff;
-    height: 48px;
-    width: 48px;
-    display: inline-block;
-    position: absolute;
-    top: 1px;
-    left: 1px;
+.google-button-icon {
+  background-color: #ffff;
+  height: 48px;
+  width: 48px;
+  display: inline-block;
+  position: absolute;
+  top: 1px;
+  left: 1px;
 }
 
-.google-button-text{
-    display: inline-block;
+.google-button-text {
+  display: inline-block;
 }
 
 .g-sign-in-button {
-    margin: 10px;
-    display: inline-block;
-    width: 240px;
-    height: 50px;
-    background-color: #4285f4;
-    color: #fff;
-    border-radius: 1px;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
-    transition: background-color .218s, border-color .218s, box-shadow .218s;
+  margin: 10px;
+  display: inline-block;
+  width: 240px;
+  height: 50px;
+  background-color: #4285f4;
+  color: #fff;
+  border-radius: 1px;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
+  transition: background-color 0.218s, border-color 0.218s, box-shadow 0.218s;
 }
 
 .g-sign-in-button:hover {
-    cursor: pointer;
-    -webkit-box-shadow: 0 0 3px 3px rgba(66, 133, 244, 0.3);
-    box-shadow: 0 0 3px 3px rgba(66, 133, 244, 0.3);
+  cursor: pointer;
+  -webkit-box-shadow: 0 0 3px 3px rgba(66, 133, 244, 0.3);
+  box-shadow: 0 0 3px 3px rgba(66, 133, 244, 0.3);
 }
 
 .g-sign-in-button:active {
-    background-color: #3367D6;
-    transition: background-color 0.2s;
+  background-color: #3367d6;
+  transition: background-color 0.2s;
 }
 
 .g-sign-in-button .content-wrapper {
-    height: 100%;
-    width: 100%;
-    border: 1px solid transparent;
+  height: 100%;
+  width: 100%;
+  border: 1px solid transparent;
 }
 
 .g-sign-in-button img {
-    width: 18px;
-    height: 18px;
+  width: 18px;
+  height: 18px;
 }
 
 .g-sign-in-button .logo-wrapper {
-    padding: 15px;
-    background: #fff;
-    width: 48px;
-    height: 100%;
-    border-radius: 1px;
-    display: inline-block;
+  padding: 15px;
+  background: #fff;
+  width: 48px;
+  height: 100%;
+  border-radius: 1px;
+  display: inline-block;
 }
 
 .g-sign-in-button .text-container {
-    font-family: Roboto,arial,sans-serif;
-    font-weight: 500;
-    letter-spacing: .21px;
-    font-size: 16px;
-    line-height: 48px;
-    vertical-align: top;
-    border: none;
-    display: inline-block;
-    text-align: center;
-    width: 180px;
+  font-family: Roboto, arial, sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.21px;
+  font-size: 16px;
+  line-height: 48px;
+  vertical-align: top;
+  border: none;
+  display: inline-block;
+  text-align: center;
+  width: 180px;
+}
+
+/* card swiping rules */
+
+.student-card {
+  margin: 0;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  padding: 0;
+  background: white;
+  overflow: hidden;
+}
+.student {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  height: 54rem;
+  margin-top: -27rem;
+  background: white;
+}
+.student__header {
+  height: 6rem;
+  background: white;
+}
+.student__content {
+  overflow: hidden;
+  position: relative;
+  height: 48rem;
+  padding-top: 4.5rem;
+  user-select: none;
+}
+.student__card-cont {
+  position: relative;
+  width: 320px;
+  height: 400px;
+  margin: 0 auto 5rem;
+}
+.student__card {
+  z-index: 2;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 100%;
+}
+.student__card.reset {
+  transition: transform 0.3s;
+  transform: translateX(0) !important;
+}
+.student__card.reset .student__card__choice {
+  transition: opacity 0.3s;
+  opacity: 0 !important;
+}
+.student__card.inactive {
+  transition: transform 0.3s;
+}
+.student__card.to-left {
+  transform: translateX(-300rem) rotate(-30deg) !important;
+}
+.student__card.to-right {
+  transform: translate(300rem) rotate(30deg) !important;
+}
+.student__card.below {
+  z-index: 1;
+}
+.student__card__top {
+  height: 20.5rem;
+  padding-top: 4rem;
+}
+.student__card__top.purple {
+  background: #7132b9;
+}
+.student__card__top.blue {
+  background: #248cb6;
+}
+.student__card__top.indigo {
+  background: #303f9f;
+}
+.student__card__top.cyan {
+  background: #26c6da;
+}
+.student__card__top.lime {
+  background: #afb42b;
+}
+.student__card__top.brown {
+  background: #795548;
+}
+.student__card__img {
+  overflow: hidden;
+  width: 10rem;
+  height: 10rem;
+  margin: 0 auto 1.5rem;
+  border-radius: 50%;
+  border: 0.5rem solid #fff;
+  /* background-image: url(""); */
+  background-size: cover;
+}
+.student__card__name {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fff;
+}
+.student__card__btm {
+  height: 11.5rem;
+  background: #fff;
+}
+.student__card__we {
+  text-align: center;
+  font-size: 2.2rem;
+  line-height: 11.5rem;
+}
+.student__card__choice {
+  border-radius: 15px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+.student__card__choice:before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 2rem;
+  height: 2rem;
+  margin-left: -1rem;
+  color: #fff;
+  border-radius: 50%;
+  box-shadow: -2rem -3rem #fff, 2rem -3rem #fff;
+}
+.student__card__choice:after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 4rem;
+  height: 1.5rem;
+  margin-left: -2rem;
+  border: 0.6rem solid #fff;
+  border-bottom: none;
+  border-top-left-radius: 1.5rem;
+  border-top-right-radius: 1.5rem;
+}
+.student__card__choice.m--reject {
+  background: #ff945a;
+}
+.student__card__choice.m--like {
+  background: #b1da96;
+}
+.student__card__choice.m--like:after {
+  transform: scaleY(-1);
+}
+.student__card__drag {
+  z-index: 5;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+}
+.student__tip {
+  text-align: center;
+  font-size: 1.2rem;
 }
